@@ -7,13 +7,13 @@ import (
 )
 
 type cursor struct {
-	line int
-	col  int
+	Line int
+	Col  int
 }
 
 type Model struct {
 	lines  []string
-	cursor cursor
+	Cursor cursor
 }
 
 func New() *Model {
@@ -22,12 +22,12 @@ func New() *Model {
 
 func initModel() *Model {
 	cursor := &cursor{
-		line: 0,
-		col:  0,
+		Line: 0,
+		Col:  0,
 	}
 	return &Model{
 		lines:  []string{""},
-		cursor: *cursor,
+		Cursor: *cursor,
 	}
 }
 
@@ -42,32 +42,32 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			switch msg.Type {
 			case tea.KeyUp:
 				{
-					if m.cursor.line > 0 {
-						m.cursor.line--
+					if m.Cursor.Line > 0 {
+						m.Cursor.Line--
 					}
 				}
 
 			case tea.KeyDown:
 				{
-					if m.cursor.line < len(m.lines)-1 {
-						m.cursor.line++
+					if m.Cursor.Line < len(m.lines)-1 {
+						m.Cursor.Line++
 					}
 				}
 			case tea.KeyBackspace:
 				{
-					line := m.lines[m.cursor.line]
+					line := m.lines[m.Cursor.Line]
 					if len(line) > 0 {
-						m.lines[m.cursor.line] = line[:len(line)-1]
+						m.lines[m.Cursor.Line] = line[:len(line)-1]
 					}
 				}
 			case tea.KeyEnter:
 				{
 					m.lines = append(m.lines, "")
-					m.cursor.line = len(m.lines) - 1
+					m.Cursor.Line = len(m.lines) - 1
 				}
 			default:
 				{
-					m.lines[m.cursor.line] += msg.String()
+					m.lines[m.Cursor.Line] += msg.String()
 				}
 			}
 		}

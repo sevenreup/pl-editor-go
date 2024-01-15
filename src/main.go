@@ -3,12 +3,14 @@ package main
 import (
 	"fmt"
 	"os"
+	"sevenreup/pl-editor-go/src/components/info"
 	"sevenreup/pl-editor-go/src/components/textarea"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
-type model struct {
+type Window struct {
 	textarea textarea.Model
 }
 
@@ -20,19 +22,19 @@ func main() {
 	}
 }
 
-func initModel() *model {
+func initModel() *Window {
 	area := textarea.New()
 
-	return &model{
+	return &Window{
 		textarea: *area,
 	}
 }
 
-func (m model) Init() tea.Cmd {
+func (m Window) Init() tea.Cmd {
 	return nil
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m Window) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
 	var cmd tea.Cmd
 
@@ -59,6 +61,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
-func (m model) View() string {
-	return fmt.Sprint(m.textarea.View())
+func (m Window) View() string {
+	return lipgloss.JoinHorizontal(lipgloss.Top, m.textarea.View()) + "\n\n" + info.DrawBottomInfo(m.textarea)
 }
