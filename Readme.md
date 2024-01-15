@@ -1,5 +1,5 @@
 # PL Editor
-This is a simple text editor written in golang
+This is a simple terminal text editor written in Golang
 
 ## TODOs
 
