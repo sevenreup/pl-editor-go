@@ -7,6 +7,8 @@ This is a simple terminal text editor written in Golang
 
 - [ ] Add line numbers
 
+- [ ] Add Editor Focus
+
 - [ ] Add line wraps
 
 - [ ] Add indents
