@@ -2,6 +2,7 @@ package textarea
 
 import (
 	"fmt"
+	"sevenreup/pl-editor-go/src/components/utils"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -55,26 +56,62 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						m.Cursor.Line++
 					}
 				}
+			case tea.KeyLeft:
+				{
+					m.Cursor.Col = utils.Clamp(m.Cursor.Col-1, 0, len(m.lines[m.Cursor.Line]))
+				}
+			case tea.KeyRight:
+				{
+					m.Cursor.Col = utils.Clamp(m.Cursor.Col+1, 0, len(m.lines[m.Cursor.Line]))
+				}
 			case tea.KeyBackspace:
 				{
-					line := m.lines[m.Cursor.Line]
-					if len(line) > 0 {
-						m.lines[m.Cursor.Line] = line[:len(line)-1]
-					}
+					m.deleteBeforeCursor()
+				}
+			case tea.KeyDelete:
+				{
+					m.deleteAfterCursor()
 				}
 			case tea.KeyEnter:
 				{
 					m.lines = append(m.lines, "")
 					m.Cursor.Line = len(m.lines) - 1
+					m.Cursor.Col = 0
 				}
 			default:
 				{
-					m.lines[m.Cursor.Line] += msg.String()
+					m.lines[m.Cursor.Line] = m.lines[m.Cursor.Line][:m.Cursor.Col] + string(msg.String()) + m.lines[m.Cursor.Line][m.Cursor.Col:]
+					m.Cursor.Col++
 				}
 			}
 		}
 	}
 	return m, nil
+}
+
+func (m *Model) deleteBeforeCursor() {
+	m.Cursor.Col = utils.Clamp(m.Cursor.Col, 0, len(m.lines[m.Cursor.Line]))
+	if m.Cursor.Col <= 0 {
+		m.mergeLineAbove(m.Cursor.Line)
+		return
+	}
+	if len(m.lines[m.Cursor.Line]) > 0 {
+		m.lines[m.Cursor.Line] = m.lines[m.Cursor.Line][:len(m.lines[m.Cursor.Line])-1]
+		m.Cursor.Col--
+	}
+}
+
+func (m *Model) deleteAfterCursor() {}
+
+func (m *Model) mergeLineAbove(line int) {
+	if line <= 0 {
+		return
+	}
+	m.lines[line-1] += m.lines[line]
+	m.lines = append(m.lines[:line], m.lines[line+1:]...)
+
+	m.Cursor.Col = len(m.lines[line-1])
+	m.Cursor.Line = m.Cursor.Line - 1
 }
 
 func (m Model) View() string {
