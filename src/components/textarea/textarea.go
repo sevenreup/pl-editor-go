@@ -2,8 +2,10 @@ package textarea
 
 import (
 	"fmt"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type cursor struct {
@@ -76,9 +78,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	s := ""
-	for _, line := range m.lines {
-		s += line + "\n"
+	var s strings.Builder
+	var style lipgloss.Style
+
+	for idx, line := range m.lines {
+		s.WriteString(style.Width(3).Foreground(lipgloss.Color("#999999")).Render(fmt.Sprint(idx+1)) + " ")
+		s.WriteString(line + "\n")
 	}
-	return fmt.Sprint(s)
+	return fmt.Sprint(s.String())
 }
